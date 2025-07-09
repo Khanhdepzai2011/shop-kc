@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rút & Mua vật phẩm - Shop Bác Gấu</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Roboto -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Custom styles for light theme and effects */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #F7F7F7; /* Light background */
+            color: #1C1C1C; /* Dark text */
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e0;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a0aec0;
+        }
+        /* Custom style for select dropdown arrow (matching light scheme) */
+        select {
+            background-image: url('data:image/svg+xml;utf8,<svg fill="%231C1C1C" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 1.5em 1.5em;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+        /* Custom colors based on original HTML's --color-default and --color-default-sub */
+        .bg-primary-pink { background-color: rgb(244, 115, 185); }
+        .text-primary-pink { color: rgb(244, 115, 185); }
+        .border-primary-pink { border-color: rgb(244, 115, 185); }
+        .bg-primary-blue { background-color: rgb(14, 62, 218); }
+        .text-primary-blue { color: rgb(14, 62, 218); }
+        .border-primary-blue { border-color: rgb(14, 62, 218); }
+
+        /* Light theme adjustments for elements */
+        .bg-white { background-color: #ffffff; } /* White background */
+        .shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); } /* Lighter shadow */
+        .text-gray-700 { color: #4a5568; } /* Darker gray text */
+        .text-gray-600 { color: #718096; } /* Darker gray text */
+        .text-gray-800 { color: #2d3748; } /* Darker dark text */
+        .bg-gray-100 { background-color: #f7fafc; } /* Lighter gray background */
+        .hover\:bg-gray-200:hover { background-color: #edf2f7; } /* Lighter hover */
+        .border-gray-200 { border-color: #edf2f7; } /* Lighter border */
+        .bg-gray-50 { background-color: #f9fafb; } /* Lighter input background */
+        .border-gray-300 { border-color: #e2e8f0; } /* Lighter input border */
+        .placeholder-gray-500::placeholder { color: #a0aec0; } /* Darker placeholder */
+        .bg-blue-100 { background-color: #ebf8ff; } /* Lighter blue info box */
+        .border-blue-300 { border-color: #90cdf4; } /* Lighter blue info box border */
+        .text-blue-800 { color: #2c5282; } /* Darker blue info box text */
+        .bg-green-600 { background-color: #48bb78; } /* Adjusted green for light theme */
+        .hover\:bg-green-700:hover { background-color: #38a169; } /* Adjusted green hover */
+        .focus\:ring-green-500:focus { ring-color: #68d391; } /* Adjusted green ring */
+        .text-green-600 { color: #38a169; } /* Adjusted green text */
+        .bg-red-700 { background-color: #e53e3e; } /* Adjusted red for light theme */
+        .text-red-200 { color: #fff5f5; } /* Adjusted red text */
+        .bg-blue-700 { background-color: #3182ce; } /* Adjusted blue for light theme */
+        .text-blue-200 { color: #ebf8ff; } /* Adjusted blue text */
+
+        /* Rainbow border effect on hover for interactive elements */
+        .interactive-hover:hover {
+            border-image: linear-gradient(to right, #ef4444, #f97316, #eab308, #22c55e, #3b82f6, #8b5cf6, #ec4899) 1;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.2), 0 0 30px rgba(249, 115, 22, 0.1); /* Subtle glow for light theme */
+            transition: all 0.3s ease-in-out;
+        }
+
+        /* Modal styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.75);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background-color: #ffffff; /* Light background for modal */
+            padding: 2rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+            max-width: 90%;
+            width: 400px;
+            text-align: center;
+            color: #1C1C1C; /* Dark text for modal */
+            position: relative;
+        }
+        .modal-close-button {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #718096; /* Darker close button */
+            cursor: pointer;
+        }
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-top: 4px solid #3498db; /* Blue spinner */
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <!-- Header Section -->
+    <header class="w-full bg-white shadow-md py-3 px-4 md:px-8 flex items-center justify-between">
+        <div class="flex items-center">
+            <a href="#" class="mr-6">
+                <!-- Updated logo image source and size -->
+                <img src="https://scontent.fdad3-1.fna.fbcdn.net/v/t39.30808-6/518273466_715714391253771_6759418031789938964_n.jpg?stp=dst-jpg_s960x960_tt6&_nc_cat=103&ccb=1-7&_nc_sid=127cfc&_nc_ohc=DIjmAhN36iIQ7kNvwEITNiM&_nc_oc=AdnaLructyBcG971AWlM8UFbKpN-Lgp56X0C4X6Nw23KlslWwNxTbVY6etg_3AAb_I0FWoXxBvo4kD_V1r4VB8Hr&_nc_zt=23&_nc_ht=scontent.fdad3-1.fna&_nc_gid=cCMa2y_Rub89hG-OcJjr-Q&oh=00_AfSPHyQKh_6gPWitz9tYXdVokBx5P8WVR1Umg8egQKJKbA&oe=68743DAD" alt="KAZIS GAMING Logo" class="h-20">
+            </a>
+            <nav class="hidden md:block">
+                <ul class="flex space-x-6 text-gray-700 font-medium">
+                    <li><a href="#" class="hover:text-primary-pink transition-colors interactive-hover">THU MUA ACC FF</a></li>
+                    <li><a href="#" class="hover:text-primary-pink transition-colors interactive-hover">TRANG CHỦ</a></li>
+                    <li><a href="#" class="hover:text-primary-pink transition-colors interactive-hover">NẠP TIỀN</a></li>
+                    <li><a href="#" class="hover:text-primary-pink transition-colors interactive-hover">MUA ACC</a></li>
+                </ul>
+            </nav>
+        </div>
+        <div class="flex items-center space-x-4">
+            <button class="text-gray-600 hover:text-primary-pink transition-colors focus:outline-none interactive-hover">
+                <i class="fas fa-bell text-xl"></i>
+            </button>
+            <div class="flex items-center bg-gray-100 p-2 rounded-full cursor-pointer hover:bg-gray-200 transition-colors interactive-hover">
+                <span class="font-semibold text-gray-800 mr-2">Kazis</span>
+                <span class="text-sm text-gray-500">Số dư: <span id="headerUserBalance">18.203.000đ</span></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Breadcrumbs -->
+    <div class="w-full bg-gray-100 py-3 px-4 md:px-8 shadow-sm">
+        <div class="max-w-7xl mx-auto flex items-center text-sm text-gray-600">
+            <a href="#" class="hover:underline interactive-hover">Trang chủ</a>
+            <span class="mx-2">/</span>
+            <span class="font-semibold">Rút vật phẩm</span>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="flex flex-grow w-full max-w-7xl mx-auto mt-6 p-4 lg:p-0">
+
+        <!-- Left Sidebar -->
+        <div class="hidden lg:block lg:w-1/4 bg-white rounded-xl shadow-lg p-6 mr-6 h-fit">
+            <!-- User Info -->
+            <div class="flex items-center mb-6 border-b pb-4 border-gray-200">
+                <img src="https://i.pinimg.com/236x/d4/5e/8f/d45e8f4280bf3083c99e60dabac2b5e8.jpg" alt="Avatar" class="rounded-full border-2 border-yellow-400 mr-4 h-10">
+                <div>
+                    <p class="text-lg font-bold text-gray-800">Kazis</p>
+                    <p class="text-sm text-gray-600">Số dư: <span class="font-semibold text-primary-pink" id="sidebarUserBalance">18.203.000đ</span></p>
+                    <p class="text-sm text-gray-600">Số dư coin: <span class="font-semibold text-primary-pink">2.000.000đ</span></p>
+                    <p class="text-sm text-gray-600">ID: <span class="font-semibold text-primary-blue">21052011</span></p>
+                </div>
+            </div>
+
+            <!-- Navigation Menu -->
+            <nav class="w-full">
+                <h4 class="text-gray-500 text-sm font-semibold mb-3">Quản lý tài khoản</h4>
+                <ul class="space-y-2 mb-6">
+                    <li class="p-3 rounded-lg flex items-center text-gray-700 hover:bg-gray-100 transition duration-200 cursor-pointer interactive-hover">
+                        <i class="fas fa-info-circle w-5 mr-3 text-gray-500"></i> Thông tin tài khoản <i class="fas fa-chevron-right ml-auto text-gray-400 text-xs"></i>
+                    </li>
+                    <li class="p-3 rounded-lg flex items-center text-gray-700 hover:bg-gray-100 transition duration-200 cursor-pointer interactive-hover">
+                        <i class="fas fa-key w-5 mr-3 text-gray-500"></i> Đổi mật khẩu <i class="fas fa-chevron-right ml-auto text-gray-400 text-xs"></i>
+                    </li>
+                </ul>
+
+                <h4 class="text-gray-500 text-sm font-semibold mb-3">Quản lý giao dịch</h4>
+                <ul class="space-y-2 mb-6">
+                    <li class="p-3 rounded-lg flex items-center text-gray-700 hover:bg-gray-100 transition duration-200 cursor-pointer interactive-hover">
+                        <i class="fas fa-wallet w-5 mr-3 text-gray-500"></i> Nạp tiền
+                    </li>
+                    <li class="p-3 rounded-lg flex items-center bg-primary-blue text-white font-bold transition duration-200 cursor-pointer interactive-hover">
+                        <i class="fas fa-box w-5 mr-3"></i> Rút vật phẩm
+                    </li>
+                </ul>
+
+                <h4 class="text-gray-500 text-sm font-semibold mb-3">Lịch sử</h4>
+                <ul class="space-y-2 mb-6">
+                    <li id="sidebarBienDongSoDu" class="p-3 rounded-lg flex items-center text-gray-700 hover:bg-gray-100 transition duration-200 cursor-pointer interactive-hover">
+                        <i class="fas fa-chart-line w-5 mr-3 text-gray-500"></i> Biến động số dư <i class="fas fa-chevron-right ml-auto text-gray-400 text-xs"></i>
+                    </li>
+                    <li class="p-3 rounded-lg flex items-center text-gray-700 hover:bg-gray-100 transition duration-200 cursor-pointer interactive-hover">
+                        <i class="fas fa-list-alt w-5 mr-3 text-gray-500"></i> Lịch sử rút vật phẩm <i class="fas fa-chevron-right ml-auto text-gray-400 text-xs"></i>
+                    </li>
+                    <li class="p-3 rounded-lg flex items-center text-gray-700 hover:bg-gray-100 transition duration-200 cursor-pointer interactive-hover">
+                        <i class="fas fa-shopping-cart w-5 mr-3 text-gray-500"></i> Tài khoản đã mua <i class="fas fa-chevron-right ml-auto text-gray-400 text-xs"></i>
+                    </li>
+                    <li class="p-3 rounded-lg flex items-center text-gray-700 hover:bg-gray-100 transition duration-200 cursor-pointer interactive-hover">
+                        <i class="fas fa-gamepad w-5 mr-3 text-gray-500"></i> Lịch sử chơi minigame <i class="fas fa-chevron-right ml-auto text-gray-400 text-xs"></i>
+                    </li>
+                    <li class="p-3 rounded-lg flex items-center text-gray-700 hover:bg-gray-100 transition duration-200 cursor-pointer interactive-hover">
+                        <i class="fas fa-concierge-bell w-5 mr-3 text-gray-500"></i> Dịch vụ đã thuê <i class="fas fa-chevron-right ml-auto text-gray-400 text-xs"></i>
+                    </li>
+                    <li class="p-3 rounded-lg flex items-center text-gray-700 hover:bg-gray-100 transition duration-200 cursor-pointer interactive-hover">
+                        <i class="fas fa-credit-card w-5 mr-3 text-gray-500"></i> Lịch sử nạp thẻ <i class="fas fa-chevron-right ml-auto text-gray-400 text-xs"></i>
+                    </li>
+                    <li id="sidebarLichSuNapAtm" class="p-3 rounded-lg flex items-center text-gray-700 hover:bg-gray-100 transition duration-200 cursor-pointer interactive-hover">
+                        <i class="fas fa-mobile-alt w-5 mr-3 text-gray-500"></i> Lịch sử nạp atm tự động <i class="fas fa-chevron-right ml-auto text-gray-400 text-xs"></i>
+                    </li>
+                </ul>
+
+                <ul class="space-y-2">
+                    <li class="p-3 rounded-lg flex items-center text-gray-700 hover:bg-gray-100 transition duration-200 cursor-pointer interactive-hover">
+                        <i class="fas fa-sign-out-alt w-5 mr-3 text-gray-500"></i> Đăng xuất
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        <!-- Right Main Content Area -->
+        <div class="w-full lg:w-3/4 bg-white rounded-xl shadow-lg p-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Rút vật phẩm</h2>
+
+            <!-- Tabs -->
+            <div class="flex border-b border-gray-200 mb-6">
+                <button id="tabRutVatPham" class="px-6 py-3 text-base font-semibold text-primary-blue border-b-2 border-primary-blue focus:outline-none interactive-hover">
+                    Rút vật phẩm
+                </button>
+                <button id="tabMuaKimCuong" class="px-6 py-3 text-base font-semibold text-gray-600 hover:text-gray-800 focus:outline-none interactive-hover">
+                    Mua Kim Cương
+                </button>
+                <button id="tabLichSu" class="px-6 py-3 text-base font-semibold text-gray-600 hover:text-gray-800 focus:outline-none interactive-hover">
+                    Lịch sử
+                </button>
+            </div>
+
+            <!-- Rút vật phẩm Content -->
+            <div id="rutVatPhamContent">
+                <!-- Disclaimer from image -->
+                <div class="bg-blue-100 border border-blue-300 text-blue-800 p-4 rounded-lg mb-6 text-sm">
+                    <p class="font-bold mb-2">Quý khách chú ý:</p>
+                    <ul class="list-disc list-inside ml-4">
+                        <li>Nhập Đúng ID Game gói rút mình chọn.</li>
+                        <li>Shop không hỗ trợ nếu quý khách rút nhầm id game.</li>
+                    </ul>
+                </div>
+
+                <!-- Choose Item Type -->
+                <div class="mb-6">
+                    <label for="itemType" class="block text-gray-700 text-base font-semibold mb-2">
+                        Chọn vật phẩm muốn rút:
+                    </label>
+                    <select id="itemType"
+                            class="w-full p-3 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue text-gray-800 text-base shadow-sm interactive-hover">
+                        <option value="freefire" selected>Vật phẩm game freefire</option>
+                        <option value="roblox">RÚT VẬT PHẨM GAME Roblox</option>
+                        <option value="gold">Rút Thỏi Vàng</option>
+                        <option value="gem">Rút Đá Quý</option>
+                    </select>
+                </div>
+
+                <!-- Diamond Withdrawal Package Section -->
+                <div class="mb-6">
+                    <label for="withdrawAmount" class="block text-gray-700 text-base font-semibold mb-2">
+                        Gói muốn rút:
+                    </label>
+                    <select id="withdrawAmount"
+                            class="w-full p-3 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue text-gray-800 text-base shadow-sm interactive-hover">
+                        <option value="0">-- Chọn số kim cương --</option>
+                        <option value="2020">Gói 2020 Kim Cương</option>
+                        <option value="1132">Gói 1132 Kim Cương</option>
+                        <option value="566">Gói 566 Kim Cương</option>
+                        <option value="283">Gói 283 Kim Cương</option>
+                        <option value="113">Gói 113 Kim Cương</option>
+                    </select>
+                </div>
+
+                <!-- Current Diamond Balance -->
+                <div class="mb-6 p-4 bg-gray-100 rounded-lg shadow-inner border border-gray-200">
+                    <p class="text-gray-700 text-base font-medium">
+                        Số vật phẩm hiện có: <span id="currentDiamonds" class="text-green-600 font-bold text-lg">15000</span> 💎
+                    </p>
+                </div>
+
+                <!-- In-game ID Input Section -->
+                <div class="mb-6">
+                    <label for="inGameId" class="block text-gray-700 text-base font-semibold mb-2">
+                        ID trong game:
+                    </label>
+                    <input type="text" id="inGameId" placeholder="Nhập ID trong game của bạn"
+                           class="w-full p-3 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue text-gray-800 placeholder-gray-500 text-base shadow-sm interactive-hover">
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex justify-end space-x-4">
+                    <button id="backButton"
+                            class="px-6 py-3 bg-gray-400 hover:bg-gray-500 text-gray-800 font-bold rounded-lg shadow-md transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-300 interactive-hover">
+                        Trở về
+                    </button>
+                    <button id="withdrawButton"
+                            class="px-6 py-3 bg-primary-blue hover:bg-blue-700 text-white font-bold rounded-lg shadow-md transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-blue interactive-hover">
+                        Rút vật phẩm
+                    </button>
+                </div>
+
+                <!-- Withdrawal History Display -->
+                <div class="mt-6 p-4 bg-gray-100 rounded-lg shadow-inner border border-gray-200">
+                    <p class="text-gray-700 text-base font-medium mb-3">
+                        Lịch sử rút vật phẩm gần đây:
+                    </p>
+                    <ul id="withdrawalHistoryList" class="space-y-2 text-gray-800 text-sm">
+                        <!-- History items will be dynamically added here -->
+                        <li class="flex justify-between items-center">
+                            <span><i class="fas fa-check-circle text-green-500 mr-2"></i> Rút 113 KC (ID: 12345678)</span>
+                            <span class="text-gray-500 text-xs">08/07/2025 15:30</span>
+                        </li>
+                        <li class="flex justify-between items-center">
+                            <span><i class="fas fa-check-circle text-green-500 mr-2"></i> Rút 283 KC (ID: 87654321)</span>
+                            <span class="text-gray-500 text-xs">08/07/2025 14:00</span>
+                        </li>
+                    </ul>
+                    <p class="text-gray-700 text-base font-medium mt-3">
+                        Tổng số lần rút thành công: <span id="withdrawalCounter" class="text-primary-pink font-bold text-lg">2</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Mua Kim Cương Content -->
+            <div id="muaKimCuongContent" class="hidden">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Mua Kim Cương</h3>
+
+                <div class="bg-blue-100 border border-blue-300 text-blue-800 p-4 rounded-lg mb-6 text-sm">
+                    <p class="font-bold mb-2">Lưu ý khi mua Kim Cương:</p>
+                    <ul class="list-disc list-inside ml-4">
+                        <li>Đảm bảo nhập đúng ID Game của bạn.</li>
+                        <li>Kim Cương sẽ được cộng vào tài khoản của bạn sau khi giao dịch thành công.</li>
+                    </ul>
+                </div>
+
+                <!-- Diamond Purchase Packages -->
+                <div class="mb-8">
+                    <label for="buyDiamondPackage" class="block text-gray-700 text-base font-semibold mb-2">
+                        Chọn gói Kim Cương:
+                    </label>
+                    <select id="buyDiamondPackage"
+                            class="w-full p-3 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue text-gray-800 text-base shadow-sm interactive-hover">
+                        <option value="0">-- Chọn gói Kim Cương --</option>
+                        <option value="5000_25">5.000đ - Kim Cương x 25</option>
+                        <option value="10000_51">10.000đ - Kim Cương x 51</option>
+                        <option value="20000_113">20.000đ - Kim Cương x 113</option>
+                        <option value="50000_283">50.000đ - Kim Cương x 283</option>
+                        <option value="100000_566">100.000đ - Kim Cương x 566</option>
+                        <option value="200000_1132">200.000đ - Kim Cương x 1132</option>
+                        <option value="500000_2830">500.000đ - Kim Cương x 2830</option>
+                    </select>
+                </div>
+
+                <!-- Buy Now Button -->
+                <button id="buyNowButton"
+                        class="w-full px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-lg shadow-md transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-500 interactive-hover">
+                    Mua Ngay!
+                </button>
+            </div>
+
+            <!-- Lịch sử Content (Biến động số dư) -->
+            <div id="lichSuContent" class="hidden">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Biến động số dư</h3>
+
+                <div id="giaoDichCongTien" class="bg-gray-100 p-4 rounded-lg shadow-inner border border-gray-200 mb-6">
+                    <h4 class="text-lg font-semibold text-gray-700 mb-3">Giao dịch cộng tiền vào tài khoản:</h4>
+                    <ul class="space-y-2">
+                        <!-- 5 transactions of +5,000,000 -->
+                        <li class="flex justify-between items-center text-gray-800 text-base">
+                            <span><i class="fas fa-plus-circle text-green-500 mr-2"></i> Cộng 5.000.000đ vào tài khoản</span>
+                            <span class="text-gray-500 text-sm">07/07/2025 10:30</span>
+                        </li>
+                        <li class="flex justify-between items-center text-gray-800 text-base">
+                            <span><i class="fas fa-plus-circle text-green-500 mr-2"></i> Cộng 5.000.000đ vào tài khoản</span>
+                            <span class="text-gray-500 text-sm">07/07/2025 11:15</span>
+                        </li>
+                        <li class="flex justify-between items-center text-gray-800 text-base">
+                            <span><i class="fas fa-plus-circle text-green-500 mr-2"></i> Cộng 5.000.000đ vào tài khoản</span>
+                            <span class="text-gray-500 text-sm">07/07/2025 12:00</span>
+                        </li>
+                        <li class="flex justify-between items-center text-gray-800 text-base">
+                            <span><i class="fas fa-plus-circle text-green-500 mr-2"></i> Cộng 5.000.000đ vào tài khoản</span>
+                            <span class="text-gray-500 text-sm">07/07/2025 13:45</span>
+                        </li>
+                        <li class="flex justify-between items-center text-gray-800 text-base">
+                            <span><i class="fas fa-plus-circle text-green-500 mr-2"></i> Cộng 5.000.000đ vào tài khoản</span>
+                            <span class="text-gray-500 text-sm">07/07/2025 14:20</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div id="lichSuNapAtmSection" class="bg-gray-100 p-4 rounded-lg shadow-inner border border-gray-200">
+                    <h4 class="text-lg font-semibold text-gray-700 mb-3">Lịch sử nạp ATM tự động:</h4>
+                    <ul class="space-y-2">
+                        <!-- 15 transactions of +500,000 -->
+                        <li class="flex justify-between items-center text-gray-800 text-base">
+                            <span><i class="fas fa-plus-circle text-green-500 mr-2"></i> Nạp ATM tự động: +500.000đ</span>
+                            <span class="text-gray-500 text-sm">06/07/2025 09:00</span>
+                        </li>
+                        <li class="flex justify-between items-center text-gray-800 text-base">
+                            <span><i class="fas fa-plus-circle text-green-500 mr-2"></i> Nạp ATM tự động: +500.000đ</span>
+                            <span class="text-gray-500 text-sm">06/07/2025 09:10</span>
+                        </li>
+                        <li class="flex justify-between items-center text-gray-800 text-base">
+                            <span><i class="fas fa-plus-circle text-green-500 mr-2"></i> Nạp ATM tự động: +500.000đ</span>
+                            <span class="text-gray-500 text-sm">06/07/2025 09:20</span>
+                        </li>
+                        <li class="flex justify-between items-center text-gray-800 text-base">
+                            <span><i class="fas fa-plus-circle text-green-500 mr-2"></i> Nạp ATM tự động: +500.000đ</span>
+                            <span class="text-gray-500 text-sm">06/07/2025 09:30</span>
+                        </li>
+                        <li class="flex justify-between items-center text-gray-800 text-base">
+                            <span><i class="fas fa-plus-circle text-green-500 mr-2"></i> Nạp ATM tự động: +500.000đ</span>
+                            <span class="text-gray-500 text-sm">06/07/2025 09:40</span>
+                        </li>
+                        <li class="flex justify-between items-center text-gray-800 text-base">
+                            <span><i class="fas fa-plus-circle text-green-500 mr-2"></i> Nạp ATM tự động: +500.000đ</span>
+                            <span class="text-gray-500 text-sm">06/07/2025 09:50</span>
+                        </li>
+                        <li class="flex justify-between items-center text-gray-800 text-base">
+                            <span><i class="fas fa-plus-circle text-green-500 mr-2"></i> Nạp ATM tự động: +500.000đ</span>
+                            <span class="text-gray-500 text-sm">06/07/2025 10:00</span>
+                        </li>
+                        <li class="flex justify-between items-center text-gray-800 text-base">
+                            <span><i class="fas fa-plus-circle text-green-500 mr-2"></i> Nạp ATM tự động: +500.000đ</span>
+                            <span class="text-gray-500 text-sm">06/07/2025 10:10</span>
+                        </li>
+                        <li class="flex justify-between items-center text-gray-800 text-base">
+                            <span><i class="fas fa-plus-circle text-green-500 mr-2"></i> Nạp ATM tự động: +500.000đ</span>
+                            <span class="text-gray-500 text-sm">06/07/2025 10:20</span>
+                        </li>
+                        <li class="flex justify-between items-center text-gray-800 text-base">
+                            <span><i class="fas fa-plus-circle text-green-500 mr-2"></i> Nạp ATM tự động: +500.000đ</span>
+                            <span class="text-gray-500 text-sm">06/07/2025 10:30</span>
+                        </li>
+                        <li class="flex justify-between items-center text-gray-800 text-base">
+                            <span><i class="fas fa-plus-circle text-green-500 mr-2"></i> Nạp ATM tự động: +500.000đ</span>
+                            <span class="text-gray-500 text-sm">06/07/2025 10:40</span>
+                        </li>
+                        <li class="flex justify-between items-center text-gray-800 text-base">
+                            <span><i class="fas fa-plus-circle text-green-500 mr-2"></i> Nạp ATM tự động: +500.000đ</span>
+                            <span class="text-gray-500 text-sm">06/07/2025 10:50</span>
+                        </li>
+                        <li class="flex justify-between items-center text-gray-800 text-base">
+                            <span><i class="fas fa-plus-circle text-green-500 mr-2"></i> Nạp ATM tự động: +500.000đ</span>
+                            <span class="text-gray-500 text-sm">06/07/2025 11:00</span>
+                        </li>
+                        <li class="flex justify-between items-center text-gray-800 text-base">
+                            <span><i class="fas fa-plus-circle text-green-500 mr-2"></i> Nạp ATM tự động: +500.000đ</span>
+                            <span class="text-gray-500 text-sm">06/07/2025 11:10</span>
+                        </li>
+                        <li class="flex justify-between items-center text-gray-800 text-base">
+                            <span><i class="fas fa-plus-circle text-green-500 mr-2"></i> Nạp ATM tự động: +500.000đ</span>
+                            <span class="text-gray-500 text-sm">06/07/2025 11:20</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Structure -->
+    <div id="withdrawalModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <button class="modal-close-button" id="modalCloseButton">&times;</button>
+            <div id="modalLoading" class="flex flex-col items-center justify-center">
+                <div class="spinner"></div>
+                <p class="text-lg font-semibold mt-4">Đang xử lý yêu cầu...</p>
+                <p class="text-sm text-gray-400 mt-2" id="loadingMessage">Vui lòng đợi trong giây lát.</p>
+            </div>
+            <div id="modalResult" class="hidden">
+                <i id="modalResultIcon" class="text-5xl mb-4"></i>
+                <p id="modalResultText" class="text-lg font-semibold mb-4"></p>
+                <button id="modalConfirmButton" class="px-6 py-3 bg-primary-blue hover:bg-blue-700 text-white font-bold rounded-lg shadow-md transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-blue interactive-hover">
+                    Xác nhận
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get references to DOM elements
+        const itemTypeSelect = document.getElementById('itemType');
+        const withdrawAmountSelect = document.getElementById('withdrawAmount');
+        const currentDiamondsSpan = document.getElementById('currentDiamonds');
+        const inGameIdInput = document.getElementById('inGameId');
+        const withdrawButton = document.getElementById('withdrawButton');
+        const backButton = document.getElementById('backButton');
+
+        // Tab elements
+        const tabRutVatPham = document.getElementById('tabRutVatPham');
+        const tabMuaKimCuong = document.getElementById('tabMuaKimCuong');
+        const tabLichSu = document.getElementById('tabLichSu');
+        const rutVatPhamContent = document.getElementById('rutVatPhamContent');
+        const muaKimCuongContent = document.getElementById('muaKimCuongContent');
+        const lichSuContent = document.getElementById('lichSuContent');
+
+        // Sidebar navigation items for specific history sections
+        const sidebarBienDongSoDu = document.getElementById('sidebarBienDongSoDu');
+        const sidebarLichSuNapAtm = document.getElementById('sidebarLichSuNapAtm');
+
+        // Specific history content sections
+        const giaoDichCongTienSection = document.getElementById('giaoDichCongTien');
+        const lichSuNapAtmSection = document.getElementById('lichSuNapAtmSection');
+
+        // Mua Kim Cuong specific elements
+        const buyDiamondPackageSelect = document.getElementById('buyDiamondPackage');
+        const buyNowButton = document.getElementById('buyNowButton');
+
+        // Balance display elements
+        const headerUserBalanceSpan = document.getElementById('headerUserBalance');
+        const sidebarUserBalanceSpan = document.getElementById('sidebarUserBalance');
+        const withdrawalCounterSpan = document.getElementById('withdrawalCounter'); // Total counter element
+        const withdrawalHistoryList = document.getElementById('withdrawalHistoryList'); // New history list element
+
+        // Modal elements
+        const withdrawalModal = document.getElementById('withdrawalModal');
+        const modalLoading = document.getElementById('modalLoading');
+        const loadingMessage = document.getElementById('loadingMessage');
+        const modalResult = document.getElementById('modalResult');
+        const modalResultIcon = document.getElementById('modalResultIcon');
+        const modalResultText = document.getElementById('modalResultText');
+        const modalCloseButton = document.getElementById('modalCloseButton');
+        const modalConfirmButton = document.getElementById('modalConfirmButton');
+
+
+        // Simulated balances and history
+        let simulatedCurrentDiamonds = 15000;
+        let simulatedUserMoneyBalance = 18203000; // Initial balance for Kazis
+        let totalSuccessfulWithdrawals = 0; // Total counter variable
+        let recentWithdrawalHistory = []; // Array to store recent withdrawal details
+        const MAX_HISTORY_ITEMS = 5; // Limit to show only the 5 most recent withdrawals
+
+        // Initial history data (for demonstration)
+        recentWithdrawalHistory.push({ diamonds: 113, time: '08/07/2025 15:30', id: '12345678' });
+        recentWithdrawalHistory.push({ diamonds: 283, time: '08/07/2025 14:00', id: '87654321' });
+        totalSuccessfulWithdrawals = recentWithdrawalHistory.length;
+
+
+        // Function to update user money balance display
+        function updateUserMoneyBalanceDisplay() {
+            headerUserBalanceSpan.textContent = simulatedUserMoneyBalance.toLocaleString('vi-VN') + 'đ';
+            sidebarUserBalanceSpan.textContent = simulatedUserMoneyBalance.toLocaleString('vi-VN') + 'đ';
+        }
+
+        // Function to render withdrawal history
+        function renderWithdrawalHistory() {
+            withdrawalHistoryList.innerHTML = ''; // Clear existing list
+            recentWithdrawalHistory.forEach(item => {
+                const li = document.createElement('li');
+                li.className = 'flex justify-between items-center';
+                li.innerHTML = `
+                    <span><i class="fas fa-check-circle text-green-500 mr-2"></i> Rút ${item.diamonds} KC (ID: ${item.id})</span>
+                    <span class="text-gray-500 text-xs">${item.time}</span>
+                `;
+                withdrawalHistoryList.prepend(li); // Add new items to the top
+            });
+
+            // Update total counter
+            if (totalSuccessfulWithdrawals < 99) {
+                withdrawalCounterSpan.textContent = totalSuccessfulWithdrawals;
+            } else {
+                withdrawalCounterSpan.textContent = '99+';
+            }
+        }
+
+        // Update initial display of balances and history
+        currentDiamondsSpan.textContent = simulatedCurrentDiamonds;
+        updateUserMoneyBalanceDisplay();
+        renderWithdrawalHistory(); // Render initial history
+
+        // Function to show a specific tab content
+        function showTab(tabName) {
+            // Reset all tab styles
+            tabRutVatPham.classList.remove('text-primary-blue', 'border-primary-blue');
+            tabRutVatPham.classList.add('text-gray-600', 'hover:text-gray-800');
+
+            tabMuaKimCuong.classList.remove('text-primary-blue', 'border-primary-blue');
+            tabMuaKimCuong.classList.add('text-gray-600', 'hover:text-gray-800');
+
+            tabLichSu.classList.remove('text-primary-blue', 'border-primary-blue');
+            tabLichSu.classList.add('text-gray-600', 'hover:text-gray-800');
+
+            // Hide all content sections
+            rutVatPhamContent.classList.add('hidden');
+            muaKimCuongContent.classList.add('hidden');
+            lichSuContent.classList.add('hidden');
+
+            // Show selected tab content and apply active style
+            if (tabName === 'rutVatPham') {
+                tabRutVatPham.classList.add('text-primary-blue', 'border-primary-blue');
+                rutVatPhamContent.classList.remove('hidden');
+            } else if (tabName === 'muaKimCuong') {
+                tabMuaKimCuong.classList.add('text-primary-blue', 'border-primary-blue');
+                muaKimCuongContent.classList.remove('hidden');
+            }
+            else if (tabName === 'lichSu') {
+                tabLichSu.classList.add('text-primary-blue', 'border-primary-blue');
+                lichSuContent.classList.remove('hidden');
+            }
+        }
+
+        // Function to show the history tab and scroll to a specific section
+        function showLichSuTabAndScroll(sectionElement) {
+            showTab('lichSu'); // First, activate the "Lịch sử" tab
+            setTimeout(() => { // Use a small timeout to ensure the tab content is visible before scrolling
+                if (sectionElement) {
+                    sectionElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 100);
+        }
+
+        // Add event listeners for tabs
+        tabRutVatPham.addEventListener('click', () => showTab('rutVatPham'));
+        tabMuaKimCuong.addEventListener('click', () => showTab('muaKimCuong'));
+        tabLichSu.addEventListener('click', () => showTab('lichSu'));
+
+        // Add event listeners for sidebar history items
+        sidebarBienDongSoDu.addEventListener('click', () => showLichSuTabAndScroll(giaoDichCongTienSection));
+        sidebarLichSuNapAtm.addEventListener('click', () => showLichSuTabAndScroll(lichSuNapAtmSection));
+
+        // Initially show the "Rút vật phẩm" tab
+        showTab('rutVatPham');
+
+        // Function to show modal
+        function showModal(type, message, isWithdrawal = false, targetAccount = '') {
+            withdrawalModal.classList.remove('hidden');
+            modalLoading.classList.add('hidden');
+            modalResult.classList.remove('hidden');
+
+            // Clear previous icon classes
+            modalResultIcon.className = '';
+            modalResultIcon.classList.add('text-5xl', 'mb-4');
+
+            if (type === 'success') {
+                modalResultIcon.classList.add('fas', 'fa-check-circle', 'text-green-500');
+                modalResultText.textContent = message;
+            } else if (type === 'error') {
+                modalResultIcon.classList.add('fas', 'fa-times-circle', 'text-red-500');
+                modalResultText.textContent = message;
+            } else if (type === 'info') {
+                modalResultIcon.classList.add('fas', 'fa-info-circle', 'text-blue-500');
+                modalResultText.textContent = message;
+            }
+
+            // Custom message for withdrawal success with target account
+            if (isWithdrawal && type === 'success') {
+                modalResultText.textContent = `Rút thành công! Kim cương đã về tài khoản: ${targetAccount}`;
+            }
+        }
+
+        // Function to show loading state in modal
+        function showLoadingModal(message) {
+            withdrawalModal.classList.remove('hidden');
+            modalLoading.classList.remove('hidden');
+            modalResult.classList.add('hidden');
+            loadingMessage.textContent = message;
+        }
+
+        // Function to hide modal
+        function hideModal() {
+            withdrawalModal.classList.add('hidden');
+        }
+
+        // Modal close button event listener
+        modalCloseButton.addEventListener('click', hideModal);
+        modalConfirmButton.addEventListener('click', hideModal);
+
+
+        // Add change event listener to the dropdowns for "Rút vật phẩm"
+        itemTypeSelect.addEventListener('change', () => {
+            hideModal();
+        });
+        withdrawAmountSelect.addEventListener('change', () => {
+            hideModal();
+        });
+
+        // Add click event listener to the withdraw button
+        withdrawButton.addEventListener('click', () => {
+            const selectedItemType = itemTypeSelect.value;
+            const withdrawAmount = parseInt(withdrawAmountSelect.value);
+            const inGameId = inGameIdInput.value.trim();
+
+            // Basic validation
+            if (selectedItemType === '0') {
+                 showModal('error', 'Vui lòng chọn loại vật phẩm muốn rút!');
+                 return;
+            }
+            if (withdrawAmount === 0) {
+                showModal('error', 'Vui lòng chọn số kim cương muốn rút!');
+                return;
+            }
+            if (inGameId === '') {
+                showModal('error', 'Vui lòng nhập ID trong game của bạn!');
+                return;
+            }
+
+            // Simulate checking if enough diamonds are available
+            if (withdrawAmount > simulatedCurrentDiamonds) {
+                showModal('error', `Bạn không có đủ ${withdrawAmount} kim cương để rút. Số dư hiện tại: ${simulatedCurrentDiamonds} 💎`);
+                return;
+            }
+
+            // Show loading modal
+            showLoadingModal(`Đang xử lý yêu cầu rút ${withdrawAmount} kim cương (${selectedItemType}) về tài khoản ${inGameId}...`);
+
+            // Simulate a delay for the "processing"
+            setTimeout(() => {
+                // Simulate success or failure randomly
+                const success = Math.random() > 0.1; // 90% chance of success for withdrawal
+
+                if (success) {
+                    simulatedCurrentDiamonds -= withdrawAmount; // Deduct diamonds
+                    currentDiamondsSpan.textContent = simulatedCurrentDiamonds; // Update displayed balance
+
+                    // Add to withdrawal history
+                    const now = new Date();
+                    const timeString = `${now.toLocaleDateString('vi-VN')} ${now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}`;
+                    recentWithdrawalHistory.unshift({ diamonds: withdrawAmount, time: timeString, id: inGameId }); // Add to beginning
+                    if (recentWithdrawalHistory.length > MAX_HISTORY_ITEMS) {
+                        recentWithdrawalHistory.pop(); // Remove oldest if exceeding limit
+                    }
+                    totalSuccessfulWithdrawals++; // Increment total counter
+                    renderWithdrawalHistory(); // Re-render history list
+
+                    showModal('success', `Rút thành công ${withdrawAmount} kim cương!`, true, inGameId); // Pass true for isWithdrawal and inGameId
+                    // Optionally reset form fields
+                    itemTypeSelect.value = 'freefire';
+                    withdrawAmountSelect.value = '0';
+                    inGameIdInput.value = '';
+                } else {
+                    showModal('error', `Rút kim cương thất bại cho ID game "${inGameId}". Vui lòng thử lại! 😔`);
+                }
+            }, 2000); // 2 second delay
+        });
+
+        // Add click event listener to the back button (simulated)
+        backButton.addEventListener('click', () => {
+            showModal('info', 'Quay trở về trang trước (chức năng mô phỏng).');
+            // In a real application, this would navigate back
+            // window.history.back();
+        });
+
+        // Add change event listener for "Mua Kim Cuong" dropdown
+        buyDiamondPackageSelect.addEventListener('change', () => {
+            hideModal();
+        });
+
+        // Add click event listener for "Mua Ngay" button
+        buyNowButton.addEventListener('click', () => {
+            const selectedPackageValue = buyDiamondPackageSelect.value;
+
+            if (selectedPackageValue === '0') {
+                showModal('error', 'Vui lòng chọn một gói Kim Cương!', false);
+                return;
+            }
+
+            const [priceStr, diamondsStr] = selectedPackageValue.split('_');
+            const purchasePrice = parseInt(priceStr);
+            const diamondAmount = parseInt(diamondsStr);
+
+            // Check if user has enough money balance
+            if (purchasePrice > simulatedUserMoneyBalance) {
+                showModal('error', `Bạn không đủ tiền để mua gói này. Số dư hiện tại: ${simulatedUserMoneyBalance.toLocaleString('vi-VN')}đ`, false);
+                return;
+            }
+
+            showLoadingModal(`Đang xử lý mua ${diamondAmount} Kim Cương với giá ${purchasePrice.toLocaleString('vi-VN')}đ...`);
+
+            setTimeout(() => {
+                const success = Math.random() > 0.1; // 90% chance of success
+
+                if (success) {
+                    simulatedCurrentDiamonds += diamondAmount; // Add bought diamonds to current balance
+                    currentDiamondsSpan.textContent = simulatedCurrentDiamonds; // Update displayed diamond balance
+
+                    simulatedUserMoneyBalance -= purchasePrice; // Deduct purchase price from user's money balance
+                    updateUserMoneyBalanceDisplay(); // Update displayed money balance
+
+                    showModal('success', `Mua thành công ${diamondAmount} Kim Cương với giá ${purchasePrice.toLocaleString('vi-VN')}đ! Số vật phẩm hiện có: ${simulatedCurrentDiamonds} 💎`, false);
+                    buyDiamondPackageSelect.value = '0';
+                } else {
+                    showModal('error', `Mua Kim Cương thất bại. Vui lòng thử lại! 😔`, false);
+                }
+            }, 2000);
+        });
+
+        // Automatic money balance increment every 1 minute
+        setInterval(() => {
+            const amountToAdd = 500000; // 500,000đ
+            simulatedUserMoneyBalance += amountToAdd;
+            updateUserMoneyBalanceDisplay();
+            // Optional: Show a small, temporary notification for the added money
+            // For a real app, you might log this or show a subtle animation.
+            console.log(`Đã cộng ${amountToAdd.toLocaleString('vi-VN')}đ vào tài khoản. Số dư mới: ${simulatedUserMoneyBalance.toLocaleString('vi-VN')}đ`);
+        }, 60000); // 60000 milliseconds = 1 minute
+
+    </script>
+</body>
+</html>
